@@ -474,7 +474,7 @@ def main():
                 sys.stdout.write('\n')
             
             # "Walk" the directory and upload files
-            for root, dirs, files in os.walk(path):
+            for root, dirs, files in os.walk(path, followlinks=True):
                 if no_recurse:
                     if root != path:
                         continue
