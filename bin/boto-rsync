@@ -524,6 +524,16 @@ def main():
                             
                             # Send the directory
                             k = b.new_key(key_name)
+                            # for s3fs 755 root:root and actual mtime
+                            this_metadata = metadata.copy()
+                            this_metadata.update(dict(
+                                mode='16877',
+                                uid='0',
+                                gid='0',
+                                mtime=int(os.stat(root).st_mtime),
+                            ))
+                            k.update_metadata(this_metadata)
+
                             if cloud_service == 'gs':
                                 k.set_contents_from_string(
                                     '', cb=cb, num_cb=num_cb, policy=grant
@@ -591,7 +601,15 @@ def main():
                         
                         # Send the file
                         k = b.new_key(key_name)
-                        k.update_metadata(metadata)
+                        # for s3fs 644 root:root and actual mtime
+                        this_metadata = metadata.copy()
+                        this_metadata.update(dict(
+                            mode='33188',
+                            uid='0',
+                            gid='0',
+                            mtime=int(os.stat(os.path.join(root, file)).st_mtime),
+                        ))
+                        k.update_metadata(this_metadata)
                         if cloud_service == 'gs':
                             k.set_contents_from_filename(
                                 fullpath, cb=cb, num_cb=num_cb, policy=grant
@@ -701,7 +719,15 @@ def main():
                     
                     # Send the file
                     k = b.new_key(key_name)
-                    k.update_metadata(metadata)
+                    # for s3fs 644 root:root and actual mtime
+                    this_metadata = metadata.copy()
+                    this_metadata.update(dict(
+                        mode='33188',
+                        uid='0',
+                        gid='0',
+                        mtime=int(os.stat(os.path.join(root, file)).st_mtime),
+                    ))
+                    k.update_metadata(this_metadata)
                     if cloud_service == 'gs':
                         k.set_contents_from_filename(
                             path, cb=cb, num_cb=num_cb, policy=grant
