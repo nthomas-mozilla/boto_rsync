@@ -478,9 +478,9 @@ def main():
                 if no_recurse:
                     if root != path:
                         continue
-                
+
                 # Create "subdirectories"
-                if root != path and not skip_dirkeys:
+                if not skip_dirkeys:
                     create_dirkey = True
                     
                     if cloud_service == 'gs':
