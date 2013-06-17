@@ -277,6 +277,10 @@ def main():
              'transfer has finished (e.g. rsync\'s --delete-after).'
         )
     parser.add_argument(
+        '-x', '--exclude', action='append', default = [],
+        help='globs that should be excluded from transfer'
+        )
+    parser.add_argument(
         '-n', '--dry-run', action='store_true', dest='no_op',
         help='No files will be transferred, but informational messages ' + \
              'will be printed about what would have happened.'
@@ -327,6 +331,7 @@ def main():
         ignore_empty = args.ignore_empty
         delete = args.delete
         no_op = args.no_op
+        exclude = args.exclude
         quiet = args.quiet
         debug = args.debug
         source = args.SOURCE
@@ -541,6 +546,14 @@ def main():
                     fullpath = os.path.join(root, file)
                     key_name = cloud_path + get_key_name(fullpath, path)
                     file_size = os.path.getsize(fullpath)
+
+                    if any([fnmatch(file, e) for e in exclude]):
+                        if not quiet:
+                            sys.stdout.write(
+                                'Skipping %s (excluded file)\n' %
+                                        fullpath[len(path):].lstrip(os.sep)
+                                        )
+                        continue
                     
                     if file_size == 0:
                         if ignore_empty:
