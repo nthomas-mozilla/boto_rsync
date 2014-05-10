@@ -557,7 +557,7 @@ def main():
                     key_name = cloud_path + get_key_name(fullpath, path)
                     file_size = os.path.getsize(fullpath)
 
-                    if any([fnmatch(file, e) for e in exclude]):
+                    if any([fnmatch(fullpath, e) for e in exclude]):
                         if not quiet:
                             sys.stdout.write(
                                 'Skipping %s (excluded file)\n' %
